@@ -1,0 +1,215 @@
+Namespace(GAN_weight=1,
+	LPIPS_weight=10,
+	M=192,
+	MIK_path='./packages/Model/MIKcodec_model/ckp_step48000_ete_model_bpp4.pth',
+	MSE_weight=1,
+	MSSSIM_weight=1,
+	N=128,
+	PTDBA_epoch=1,
+	PTDBA_lmbda=8,
+	PTDBA_qg_resume='',
+	TDBA_iterations=10,
+	TDBA_lmbda=8,
+	batch_size=8,
+	char_embed=128,
+	char_layernum=3,
+	depths_char=[1,
+	1,
+	1],
+	dist_backend='nccl',
+	dist_url='tcp://224.66.41.62:23456',
+	eval_folders=False,
+	eval_interval=10000,
+	eval_only=False,
+	eval_set='/data/datasets/kodak/images',
+	fc_det_load_result='',
+	fc_inference_dir='',
+	fc_ssic=False,
+	feature_compression=False,
+	freeze_transform=False,
+	groups_tobe_decode=[0,
+	0,
+	0],
+	groupvit_load_group_msk='',
+	groupvit_save_group_msk='',
+	high_lmbda=10,
+	hyper_channels=None,
+	lmbda=1024,
+	low_lmbda=4,
+	lr=5e-05,
+	metric=['mse'],
+	model='ours_meanscalehyper',
+	multiprocessing_distributed=False,
+	multistep_gamma=0.1,
+	multistep_milestones=[1800000],
+	num_heads_char=[8,
+	8,
+	8],
+	num_workers=8,
+	only_rec_fg=False,
+	patch_size=256,
+	predicted_task_driven_bit_allocation=False,
+	rank=-1,
+	reset_rdo=False,
+	resume='',
+	save_dir='./logs/cube_train/ours_meanscalehyper_checker_cube_mse1024',
+	save_qmap='',
+	save_result='',
+	saving_interval=200000,
+	saving_iteration=0,
+	scheduler='multistep',
+	soft_then_hard=False,
+	soft_then_hard_start_iteration=0,
+	start_joint_training_iteration=-1,
+	swin_disable_norm=False,
+	task_driven=False,
+	task_driven_bit_allocation=False,
+	td_det_cfg_file='COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml',
+	td_det_threshold=0.05,
+	td_det_weights='./packages/Model/Detector_model/model_final_68b088.pkl',
+	td_feat_ratio=[0.1,
+	0.2,
+	0.3,
+	0.4],
+	td_lmbda_feat=32,
+	total_iter=2000000,
+	train_set='/data1/datasets/Imagenet',
+	transform_channels=[128,
+	128,
+	128,
+	192],
+	vbr_training=False,
+	visualize_bit_allocation='',
+	world_size=-1)
+building extrctor & adapter ... building feature compression model ... 
+CodingNet(
+  (entropy_bottleneck): EntropyBottleneck(
+    (likelihood_lower_bound): LowerBound()
+  )
+  (g_a): Sequential(
+    (0): ResidualBlock(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (1): ResidualBlockWithStride(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (gdn): GDN(
+        (beta_reparam): NonNegativeParametrizer(
+          (lower_bound): LowerBound()
+        )
+        (gamma_reparam): NonNegativeParametrizer(
+          (lower_bound): LowerBound()
+        )
+      )
+      (skip): Conv2d(128, 128, kernel_size=(1, 1), stride=(2, 2))
+    )
+    (2): ResidualBlock(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+  )
+  (g_s): Sequential(
+    (0): ResidualBlock(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (1): ResidualBlockUpsample(
+      (subpel_conv): Sequential(
+        (0): Conv2d(128, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): PixelShuffle(upscale_factor=2)
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (igdn): GDN(
+        (beta_reparam): NonNegativeParametrizer(
+          (lower_bound): LowerBound()
+        )
+        (gamma_reparam): NonNegativeParametrizer(
+          (lower_bound): LowerBound()
+        )
+      )
+      (upsample): Sequential(
+        (0): Conv2d(128, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): PixelShuffle(upscale_factor=2)
+      )
+    )
+    (2): ResidualBlock(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (3): ResidualBlockUpsample(
+      (subpel_conv): Sequential(
+        (0): Conv2d(128, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): PixelShuffle(upscale_factor=2)
+      )
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (igdn): GDN(
+        (beta_reparam): NonNegativeParametrizer(
+          (lower_bound): LowerBound()
+        )
+        (gamma_reparam): NonNegativeParametrizer(
+          (lower_bound): LowerBound()
+        )
+      )
+      (upsample): Sequential(
+        (0): Conv2d(128, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): PixelShuffle(upscale_factor=2)
+      )
+    )
+    (4): ResidualBlock(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (leaky_relu): LeakyReLU(negative_slope=0.01, inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+  )
+  (h_a): Sequential(
+    (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+  )
+  (h_s): Sequential(
+    (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Sequential(
+      (0): Conv2d(128, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PixelShuffle(upscale_factor=2)
+    )
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Conv2d(128, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Sequential(
+      (0): Conv2d(192, 768, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PixelShuffle(upscale_factor=2)
+    )
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Conv2d(192, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (gaussian_conditional): GaussianConditional(
+    (likelihood_lower_bound): LowerBound()
+    (lower_bound_scale): LowerBound()
+  )
+  (entropy_parameters): Sequential(
+    (0): Conv2d(512, 426, kernel_size=(1, 1), stride=(1, 1))
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Conv2d(426, 341, kernel_size=(1, 1), stride=(1, 1))
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Conv2d(341, 256, kernel_size=(1, 1), stride=(1, 1))
+  )
+  (context_prediction): MaskedConv2d(128, 256, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
+)
+
+building task model ... 

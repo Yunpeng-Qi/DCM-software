@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Cube",
+            "type": "python",
+            "request": "launch",
+            "program":  "train_cube.py",
+            "console": "integratedTerminal",
+            "args": ["--lr", "5e-5",
+            "--lmbda", "16384",
+            "--model", "RDT_CheckerCube",
+            // "--hyper-channels", "[192 192 192]",
+            "--total-iteration", "1000000", "--multistep-milestones", "1000000" ,
+                ]
+        }
+    ]
+}
